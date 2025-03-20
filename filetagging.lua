@@ -3,7 +3,11 @@ local utils = require("mp.utils")
 -- change the name of the tag here
 local tag = "watched"
 -- change the name of the directory here
-local directory = ""
+-- you can use a single directory or as many as you want
+local directory = {
+	"/path/to/first/directory",
+	"/path/to/second/directory",
+}
 
 local Path_match = false
 
@@ -12,26 +16,19 @@ mp.register_event("file-loaded", function()
 	local working_directory = mp.get_property("working-directory")
 	local full_path = utils.join_path(working_directory, current_path)
 	Current_directory, _ = utils.split_path(full_path)
-	print("Current directory: " .. Current_directory)
 	check_path()
 end)
 
 function check_path()
-	if string.find(Current_directory, directory, 1, true) then
-		Path_match = true
-		print("Path match: " .. tostring(Path_match))
-	else
-		Path_match = false
-		print("Path has not been found")
+	for _, dir in ipairs(directory) do
+		if string.find(Current_directory, dir, 1, true) then
+			Path_match = true
+		end
 	end
 end
 
 function tag_file()
 	local path = mp.get_property("path")
-	if not path then
-		mp.osd_message("Error: No file loaded")
-		return
-	end
 
 	local command = "xattr -w user.xdg.tags " .. tag .. " '" .. path .. "'"
 
