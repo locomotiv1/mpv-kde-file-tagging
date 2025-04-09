@@ -30,7 +30,6 @@ end
 function tag_file()
 	local path = mp.get_property("path")
 	if not path then
-		mp.osd_message("Error: No file loaded")
 		return
 	end
 
